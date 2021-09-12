@@ -1,0 +1,954 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Goal of this notebook is to scale through a cluster to calculate NDVI across 128+ Landsat Scenes (using DASK) &#8212; Cloud Native Open Data Workflows</title>
+    
+  <link href="_static/css/theme.css" rel="stylesheet" />
+  <link href="_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+
+    
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/sphinx-book-theme.e8e5499552300ddf5d7adccae7cc3b70.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    
+  <link rel="preload" as="script" href="_static/js/index.1c5a1a01449ed65a7b51.js">
+
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/togglebutton.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
+    <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
+    <script >
+        const thebe_selector = ".thebe"
+        const thebe_selector_input = "pre"
+        const thebe_selector_output = ".output"
+    </script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="index.html">
+      
+      <img src="_static/opendata.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Cloud Native Open Data Workflows</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+    <div class="bd-toc-item active">
+        <ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="intro.html">
+   Welcome to your Jupyter Book
+  </a>
+ </li>
+</ul>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="markdown.html">
+   Markdown Files
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="notebooks.html">
+   Content with notebooks
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="01_intro_to_cloud.html">
+   Introduction to Cloud Computing
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="02_aws_opendatasets.html">
+   Introduction to AWS Open Datasets
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="03_multidim_analysis.html">
+   Multi-dimensional Analysis with xarray
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="topbar container-xl fixed-top">
+    <div class="topbar-contents row">
+        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
+        <div class="col pl-md-4 topbar-main">
+            
+            <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+                data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+                aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+                title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+                <i class="fas fa-bars"></i>
+                <i class="fas fa-arrow-left"></i>
+                <i class="fas fa-arrow-up"></i>
+            </button>
+            
+            
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="_sources/06_scalingup_pangeo.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.ipynb</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+</div>
+
+            <!-- Source interaction buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://github.com/executablebooks/jupyter-book"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        <a class="issues-button"
+            href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2F06_scalingup_pangeo.html&body=Your%20issue%20content%20here."><button
+                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
+                title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
+        
+    </div>
+</div>
+
+            <!-- Full screen (wrap in <a> to have style consistency -->
+
+<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+        title="Fullscreen mode"><i
+            class="fas fa-expand"></i></button></a>
+
+            <!-- Launch buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
+    <div class="dropdown-buttons">
+        
+        <a class="binder-button" href="https://mybinder.org/v2/gh/executablebooks/jupyter-book/master?urlpath=tree/docs/06_scalingup_pangeo.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
+                data-placement="left"><img class="binder-button-logo"
+                    src="_static/images/logo_binder.svg"
+                    alt="Interact on binder">Binder</button></a>
+        
+        
+        
+        
+    </div>
+</div>
+
+        </div>
+
+        <!-- Table of contents -->
+        <div class="d-none d-md-block col-md-2 bd-toc show">
+            
+            <div class="tocsection onthispage pt-5 pb-3">
+                <i class="fas fa-list"></i> Contents
+            </div>
+            <nav id="bd-toc-nav">
+                <ul class="visible nav section-nav flex-column">
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#">
+   Goal of this notebook is to scale through a cluster to calculate NDVI across 128+ Landsat Scenes (using DASK)
+  </a>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#conversion-to-toa-reflectance">
+   Conversion to TOA Reflectance
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#be-warned-that-toa-reflectance-with-a-correction-for-the-sun-angle-is-not-done">
+     Be warned that TOA reflectance with a correction for the sun angle is not done
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#start-a-dask-client-to-monitor-execution-with-the-dashboard">
+   Start a Dask client to monitor execution with the dashboard.
+  </a>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#lets-inspect-the-ndvi-of-a-sample-scene">
+   Lets inspect the NDVI of  a sample scene
+  </a>
+ </li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
+  <div class="section" id="goal-of-this-notebook-is-to-scale-through-a-cluster-to-calculate-ndvi-across-128-landsat-scenes-using-dask">
+<h1>Goal of this notebook is to scale through a cluster to calculate NDVI across 128+ Landsat Scenes (using DASK)<a class="headerlink" href="#goal-of-this-notebook-is-to-scale-through-a-cluster-to-calculate-ndvi-across-128-landsat-scenes-using-dask" title="Permalink to this headline">¶</a></h1>
+<p>(<a class="reference external" href="https://landsat.usgs.gov/landsat_acq">https://landsat.usgs.gov/landsat_acq</a>)
+Use the tools on this page to determine when the Landsat 7 and Landsat 8 satellites acquire data over your area of interest, and to view the paths that were acquired on any given day.</p>
+<p>Landsat satellites image the entire Earth every 16 days in an 8-day offset. Landsat 7 acquires data in descending (daytime) node, while Landsat 8 acquires data in both descending and occasional ascending (nighttime) node.</p>
+<p>The Landsat 8 satellite orbits the the Earth in a sun-synchronous, near-polar orbit, at an altitude of 705 km (438 mi), inclined at 98.2 degrees, and circles the Earth every 99 minutes. The satellite has a 16-day repeat cycle with an equatorial crossing time: 10:00 a.m. +/- 15 minutes.</p>
+<p>Landsat satellites image the entire Earth every 16 days in an 8-day offset. Landsat 7 acquires data in descending (daytime) node, while Landsat 8 acquires data in both descending and occasional ascending (nighttime) node.</p>
+<p>Row refers to the latitudinal center line of a frame of imagery. As the satellite moves along its path, the observatory instruments are continuously scanning the terrain below.  These will be squares centered on the orbital path, but tilted clockwise when views on the UTM projection used for the distributed data.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;http://landsat-pds.s3.amazonaws.com/c1/L8/227/065/LC08_L1TP_227065_20200608_20200626_01_T1/&#39;</span>
+<span class="n">redband</span> <span class="o">=</span> <span class="n">url</span><span class="o">+</span><span class="s1">&#39;LC08_L1TP_227065_20200608_20200626_01_T1_B</span><span class="si">{}</span><span class="s1">.TIF&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>wget <span class="o">{</span>redband<span class="o">}</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>--2021-09-11 19:31:26--  http://landsat-pds.s3.amazonaws.com/c1/L8/227/065/LC08_L1TP_227065_20200608_20200626_01_T1/LC08_L1TP_227065_20200608_20200626_01_T1_B4.TIF
+Resolving landsat-pds.s3.amazonaws.com (landsat-pds.s3.amazonaws.com)... 
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>52.218.178.11
+Connecting to landsat-pds.s3.amazonaws.com (landsat-pds.s3.amazonaws.com)|52.218.178.11|:80... 
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>connected.
+HTTP request sent, awaiting response... 
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>200 OK
+Length: 59222647 (56M) [image/tiff]
+Saving to: ‘LC08_L1TP_227065_20200608_20200626_01_T1_B4.TIF.2’
+
+
+          LC08_L1TP   0%[                    ]       0  --.-KB/s               
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>         LC08_L1TP_   3%[                    ]   1.72M  8.56MB/s               
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>        LC08_L1TP_2   7%[&gt;                   ]   4.50M  11.1MB/s               
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>       LC08_L1TP_22  13%[=&gt;                  ]   7.65M  12.6MB/s               
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>      LC08_L1TP_227  19%[==&gt;                 ]  10.97M  13.6MB/s               
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>     LC08_L1TP_2270  24%[===&gt;                ]  13.94M  13.8MB/s               
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    LC08_L1TP_22706  30%[=====&gt;              ]  17.33M  14.3MB/s               
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   LC08_L1TP_227065  35%[======&gt;             ]  20.25M  14.4MB/s               
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  LC08_L1TP_227065_  41%[=======&gt;            ]  23.34M  14.4MB/s               
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> LC08_L1TP_227065_2  46%[========&gt;           ]  26.39M  14.5MB/s               
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>LC08_L1TP_227065_20  52%[=========&gt;          ]  29.71M  14.7MB/s               
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C08_L1TP_227065_202  58%[==========&gt;         ]  33.07M  14.9MB/s               
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>08_L1TP_227065_2020  63%[===========&gt;        ]  36.03M  14.8MB/s               
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>8_L1TP_227065_20200  69%[============&gt;       ]  39.06M  14.9MB/s               
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>_L1TP_227065_202006  74%[=============&gt;      ]  42.32M  14.9MB/s               
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>L1TP_227065_2020060  81%[===============&gt;    ]  45.78M  15.1MB/s    eta 1s     
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1TP_227065_20200608  86%[================&gt;   ]  49.11M  15.2MB/s    eta 1s     
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>TP_227065_20200608_  92%[=================&gt;  ]  52.25M  15.7MB/s    eta 1s     
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>P_227065_20200608_2  98%[==================&gt; ]  55.42M  15.9MB/s    eta 1s     
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>LC08_L1TP_227065_20 100%[===================&gt;]  56.48M  15.9MB/s    in 3.7s    
+
+2021-09-11 19:31:30 (15.3 MB/s) - ‘LC08_L1TP_227065_20200608_20200626_01_T1_B4.TIF.2’ saved [59222647/59222647]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>gdalinfo LC08_L1TP_227065_20200608_20200626_01_T1_B4.TIF
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/bin/bash: gdalinfo: command not found
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gdal</span>
+<span class="kn">from</span> <span class="nn">gdalconst</span> <span class="kn">import</span> <span class="n">GA_ReadOnly</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="s1">&#39;LC08_L1TP_227065_20200608_20200626_01_T1_B4.TIF&#39;</span><span class="p">,</span> <span class="n">GA_ReadOnly</span><span class="p">)</span>
+<span class="n">geoTransform</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">GetGeoTransform</span><span class="p">()</span>
+<span class="n">minx</span> <span class="o">=</span> <span class="n">geoTransform</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">maxy</span> <span class="o">=</span> <span class="n">geoTransform</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+<span class="n">maxx</span> <span class="o">=</span> <span class="n">minx</span> <span class="o">+</span> <span class="n">geoTransform</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">data</span><span class="o">.</span><span class="n">RasterXSize</span>
+<span class="n">miny</span> <span class="o">=</span> <span class="n">maxy</span> <span class="o">+</span> <span class="n">geoTransform</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">*</span> <span class="n">data</span><span class="o">.</span><span class="n">RasterYSize</span>
+<span class="nb">print</span> <span class="p">([</span><span class="n">minx</span><span class="p">,</span> <span class="n">miny</span><span class="p">,</span> <span class="n">maxx</span><span class="p">,</span> <span class="n">maxy</span><span class="p">])</span>
+<span class="n">data</span> <span class="o">=</span> <span class="kc">None</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">4</span><span class="o">-</span><span class="n">b3803a6c64f6</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="kn">import</span> <span class="nn">gdal</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="kn">from</span> <span class="nn">gdalconst</span> <span class="kn">import</span> <span class="n">GA_ReadOnly</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span> 
+<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="n">data</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="s1">&#39;LC08_L1TP_227065_20200608_20200626_01_T1_B4.TIF&#39;</span><span class="p">,</span> <span class="n">GA_ReadOnly</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="n">geoTransform</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">GetGeoTransform</span><span class="p">()</span>
+
+<span class="ne">ModuleNotFoundError</span>: No module named &#39;gdal&#39;
+</pre></div>
+</div>
+</div>
+</div>
+<p>EPSG:4326
+WGS 84 – WGS84 - World Geodetic System 1984, used in GPS</p>
+<p>Reproject “EPSG”,32621 to EPSG:4326</p>
+<p>Lets find the bounding box for the region</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">osgeo</span> <span class="kn">import</span> <span class="n">gdal</span>
+
+<span class="n">input_raster</span><span class="o">=</span><span class="n">gdal</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="s1">&#39;LC08_L1TP_227065_20200608_20200626_01_T1_B4.TIF&#39;</span><span class="p">)</span>
+<span class="n">output_raster</span> <span class="o">=</span> <span class="s2">&quot;Reproj&quot;</span> <span class="o">+</span> <span class="s1">&#39;LC08_L1TP_227065_20200608_20200626_01_T1_B4.TIF&#39;</span>
+<span class="n">gdal</span><span class="o">.</span><span class="n">Warp</span><span class="p">(</span><span class="n">output_raster</span><span class="p">,</span><span class="n">input_raster</span><span class="p">,</span><span class="n">dstSRS</span><span class="o">=</span><span class="s1">&#39;EPSG:4326&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;osgeo.gdal.Dataset; proxy of &lt;Swig Object of type &#39;GDALDatasetShadow *&#39; at 0x7fa6f4e6d870&gt; &gt;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="s1">&#39;ReprojLC08_L1TP_227065_20200608_20200626_01_T1_B4.TIF&#39;</span><span class="p">,</span> <span class="n">GA_ReadOnly</span><span class="p">)</span>
+<span class="n">geoTransform</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">GetGeoTransform</span><span class="p">()</span>
+<span class="n">minx</span> <span class="o">=</span> <span class="n">geoTransform</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">maxy</span> <span class="o">=</span> <span class="n">geoTransform</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+<span class="n">maxx</span> <span class="o">=</span> <span class="n">minx</span> <span class="o">+</span> <span class="n">geoTransform</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">data</span><span class="o">.</span><span class="n">RasterXSize</span>
+<span class="n">miny</span> <span class="o">=</span> <span class="n">maxy</span> <span class="o">+</span> <span class="n">geoTransform</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">*</span> <span class="n">data</span><span class="o">.</span><span class="n">RasterYSize</span>
+<span class="nb">print</span> <span class="p">([</span><span class="n">minx</span><span class="p">,</span> <span class="n">miny</span><span class="p">,</span> <span class="n">maxx</span><span class="p">,</span> <span class="n">maxy</span><span class="p">])</span>
+<span class="n">data</span> <span class="o">=</span> <span class="kc">None</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[-56.33759064732078, -8.290860873734873, -54.2594726602711, -6.178270448812246]
+</pre></div>
+</div>
+</div>
+</div>
+<p>If you have trouble getting the right scene to cover the area you want:</p>
+<p>Go to <a class="reference external" href="https://landsat.usgs.gov/wrs-2-pathrow-latitudelongitude-converter">https://landsat.usgs.gov/wrs-2-pathrow-latitudelongitude-converter</a>  and enter the lat/long.
+Then note the path row, and when you get the Landsat data, insure you have the correct path and row, which are listed in the download table.
+Use <a class="reference external" href="https://landsat.usgs.gov/landsat_acq">https://landsat.usgs.gov/landsat_acq</a> tool, which will show the coverage for each data
+Path/Row shapefiles and KML: <a class="reference external" href="https://www.usgs.gov/land-resources/nli/landsat/landsat-shapefiles-and-kml-files">https://www.usgs.gov/land-resources/nli/landsat/landsat-shapefiles-and-kml-files</a>
+KML file direct download:<a class="reference external" href="https://prd-wret.s3-us-west-2.amazonaws.com/assets/palladium/production/atoms/files/WRS-2_bound_world_0.kml">https://prd-wret.s3-us-west-2.amazonaws.com/assets/palladium/production/atoms/files/WRS-2_bound_world_0.kml</a></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#get list of images</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">bs4</span> <span class="kn">import</span> <span class="n">BeautifulSoup</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="n">URL</span> <span class="o">=</span> <span class="s1">&#39;https://landsatonaws.com/L8/227/065/&#39;</span>
+<span class="n">page</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">URL</span><span class="p">)</span>
+
+<span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">page</span><span class="o">.</span><span class="n">content</span><span class="p">,</span> <span class="s1">&#39;html.parser&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Use beautiful soup to extract all the links, and Tier 1 only</span>
+<span class="n">LevelOnes</span><span class="o">=</span><span class="p">[]</span>
+<span class="k">for</span> <span class="n">link</span> <span class="ow">in</span> <span class="n">soup</span><span class="o">.</span><span class="n">findAll</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;href&#39;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;^/L8/227/065&quot;</span><span class="p">)}):</span>
+    <span class="c1">#print(link.get(&#39;href&#39;))</span>
+    <span class="n">href</span> <span class="o">=</span> <span class="n">link</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;href&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">href</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;T1&quot;</span><span class="p">):</span>
+        <span class="n">LevelOnes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">href</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">len</span><span class="p">(</span><span class="n">LevelOnes</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>128
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Base links</span>
+<span class="n">LevelOnes</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/L8/227/065/LC08_L1TP_227065_20200827_20200905_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20200827_20200905_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20200811_20200822_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20200726_20200807_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20200710_20200721_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20200624_20200707_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20200608_20200626_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20200608_20200626_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20200523_20200607_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20200507_20200509_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20200405_20200410_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20200217_20200225_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20191215_20191226_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20191129_20191216_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20191028_20191114_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20191012_20191018_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20190926_20191017_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20190910_20190917_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20190825_20190903_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20190724_20190801_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20190708_20190719_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20190622_20190704_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20190606_20190619_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20190505_20190520_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20190505_20190520_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20190419_20190423_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20190318_20190325_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20181126_20181210_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20181126_20181210_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20181110_20181127_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20181025_20181114_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20181009_20181029_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20180923_20180929_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20180923_20180929_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20180907_20180912_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20180907_20180912_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20180822_20180829_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20180806_20180815_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20180721_20180731_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20180705_20180717_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20180705_20180717_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20180705_20180717_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20180619_20180703_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20180619_20180703_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20180518_20180604_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20180502_20180516_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20180227_20180308_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20180110_20180119_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20171123_20171206_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20171022_20171107_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20171006_20171023_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20170904_20170916_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20170904_20170916_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20170904_20170916_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20170904_20170916_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20170819_20170826_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20170803_20170812_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20170718_20170727_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20170718_20170727_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20170718_20170727_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20170718_20170727_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20170702_20170715_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20170616_20170629_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20170616_20170629_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20170616_20180528_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20170531_20170615_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20170515_20170525_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20170413_20170501_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20170312_20170317_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20170107_20170311_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20161206_20180528_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20161104_20170318_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20161003_20170320_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20160917_20170321_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20160901_20170321_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20160816_20170322_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20160731_20170322_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20160715_20170323_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20160629_20170323_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20160613_20170324_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20160528_20170324_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20160512_20170324_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20160426_20170326_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20160410_20170326_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20160222_20170329_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20160206_20170330_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20151204_20170401_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20151118_20170402_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20151102_20170402_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20151017_20170403_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20151001_20170403_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20150915_20170404_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20150830_20170405_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20150814_20170406_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20150729_20170406_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20150713_20170407_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20150627_20170407_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20150611_20170408_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20150526_20170408_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20150510_20170409_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20150424_20170409_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20150408_20170410_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20150203_20170413_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20150102_20170415_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20141217_20170416_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20141115_20180528_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20141014_20170418_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20140928_20170419_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20140912_20170419_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20140827_20170420_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20140811_20170420_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20140726_20170421_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20140710_20170421_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20140624_20170421_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20140608_20170422_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20140523_20170422_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20140507_20170422_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20140421_20170423_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20140320_20170425_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20131011_20170429_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20130909_20170502_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20130824_20170502_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20130808_20170503_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20130723_20170503_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20130707_20170503_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20130621_20170503_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20130605_20170504_01_T1&#39;,
+ &#39;/L8/227/065/LC08_L1TP_227065_20130520_20170504_01_T1&#39;]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Lets add Band 4 (Red) only</span>
+<span class="n">base</span><span class="o">=</span><span class="s2">&quot;s3://landsat-pds/c1&quot;</span>
+<span class="n">redlinks</span><span class="o">=</span><span class="p">[]</span>
+<span class="n">baselinks</span><span class="o">=</span><span class="p">[]</span>
+<span class="k">for</span> <span class="n">link</span> <span class="ow">in</span> <span class="n">LevelOnes</span><span class="p">:</span>
+    <span class="c1">#print(link.split(&#39;/&#39;)[4])</span>
+    <span class="n">redband</span> <span class="o">=</span> <span class="n">base</span><span class="o">+</span><span class="n">link</span><span class="o">+</span><span class="s2">&quot;/&quot;</span><span class="o">+</span><span class="n">link</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="mi">4</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;_B</span><span class="si">{}</span><span class="s1">.TIF&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">baselink</span> <span class="o">=</span> <span class="n">base</span><span class="o">+</span><span class="n">link</span><span class="o">+</span><span class="s2">&quot;/&quot;</span><span class="o">+</span><span class="n">link</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="mi">4</span><span class="p">]</span>
+    <span class="n">baselinks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">baselink</span><span class="p">)</span>
+    <span class="n">redlinks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">redband</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span> <span class="c1">#baselinks</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">redlinks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;s3://landsat-pds/c1/L8/227/065/LC08_L1TP_227065_20200827_20200905_01_T1/LC08_L1TP_227065_20200827_20200905_01_T1_B4.TIF&#39;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">baselinks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;s3://landsat-pds/c1/L8/227/065/LC08_L1TP_227065_20200827_20200905_01_T1/LC08_L1TP_227065_20200827_20200905_01_T1&#39;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">rasterio</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Landsat on AWS:&#39;</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">redlinks</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">profile</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Landsat on AWS:
+{&#39;driver&#39;: &#39;GTiff&#39;, &#39;dtype&#39;: &#39;uint16&#39;, &#39;nodata&#39;: None, &#39;width&#39;: 7621, &#39;height&#39;: 7761, &#39;count&#39;: 1, &#39;crs&#39;: CRS.from_epsg(32621), &#39;transform&#39;: Affine(30.0, 0.0, 573885.0,
+       0.0, -30.0, -683685.0), &#39;blockxsize&#39;: 512, &#39;blockysize&#39;: 512, &#39;tiled&#39;: True, &#39;compress&#39;: &#39;deflate&#39;, &#39;interleave&#39;: &#39;band&#39;}
+</pre></div>
+</div>
+</div>
+</div>
+<p>Writing a DASK task which calculates NDVI of each pixel in the large scene</p>
+<p>Calculate and display NDVI : Uses the MTL to calculate Landsat scene’s image as reflectance values, and then we are ready to compute NDVI.</p>
+<p>𝑁𝐷𝑉𝐼=𝑁𝐼𝑅−𝑅𝑒𝑑𝑁𝐼𝑅+𝑅𝑒𝑑, highlights areas of healthy vegetation with high NDVI values, which appear as green in the image below.</p>
+<p>The Landsat Level 1 images are delivered in a quantized format.
+This has to be converted to top-of-atmosphere reflectance using the provided metadata.</p>
+</div>
+<div class="section" id="conversion-to-toa-reflectance">
+<h1>Conversion to TOA Reflectance<a class="headerlink" href="#conversion-to-toa-reflectance" title="Permalink to this headline">¶</a></h1>
+<p>Reflective band DN’s can be converted to TOA reflectance using the rescaling coefficients in the MTL file:</p>
+<p>ρλ′=Mρ * Qcal+Aρ</p>
+<p>where:</p>
+<p>ρλ’   = TOA planetary reflectance, without correction for solar angle.  Note that ρλ’ does not contain a correction for the sun angle.</p>
+<p>Mρ=Band-specific multiplicative rescaling factor from the metadata (REFLECTANCE_MULT_BAND_x, where x is the band number)</p>
+<p>Aρ  =Band-specific additive rescaling factor from the metadata (REFLECTANCE_ADD_BAND_x, where x is the band number)</p>
+<p>Qcal =  Quantized and calibrated standard product pixel values (DN)</p>
+<p>TOA reflectance with a correction for the sun angle is then:</p>
+<p>ρλ=ρλ′cos(θSZ)=ρλ′sin(θSE)</p>
+<p>where:</p>
+<p>ρλ=  TOA planetary reflectance
+θSE =  Local sun elevation angle.
+The scene center sun elevation angle in degrees is provided in the metadata (SUN_ELEVATION).
+θSZ =Local solar zenith angle;  θSZ = 90° - θSE</p>
+<p>For more accurate reflectance calculations, per-pixel solar angles could be used instead of the scene center solar angle.
+While per-pixel solar zenith angles are not provided with the Landsat Level-1 products, tools are provided which allow users to create angle bands.</p>
+<div class="section" id="be-warned-that-toa-reflectance-with-a-correction-for-the-sun-angle-is-not-done">
+<h2>Be warned that TOA reflectance with a correction for the sun angle is not done<a class="headerlink" href="#be-warned-that-toa-reflectance-with-a-correction-for-the-sun-angle-is-not-done" title="Permalink to this headline">¶</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dask</span>
+<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xa</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">rasterio</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="nd">@dask</span><span class="o">.</span><span class="n">delayed</span>
+<span class="k">def</span> <span class="nf">get_ndvi</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
+    <span class="c1"># Get MTL </span>
+    <span class="c1">#https://landsat-pds.s3.amazonaws.com</span>
+    <span class="n">mtl</span> <span class="o">=</span> <span class="n">item</span> <span class="o">+</span><span class="s1">&#39;_MTL.json&#39;</span>
+    <span class="c1"># A hack to get the path to download the MTL file</span>
+    <span class="n">mtl</span> <span class="o">=</span> <span class="n">mtl</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;s3://landsat-pds&quot;</span><span class="p">,</span> <span class="s2">&quot;https://landsat-pds.s3.amazonaws.com&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">mtl</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Downloading&quot;</span><span class="p">,</span> <span class="n">mtl</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">mtl</span><span class="p">)</span>
+        <span class="n">out_filename</span> <span class="o">=</span> <span class="n">mtl</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="mi">6</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;.json&#39;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">out_filename</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+    <span class="c1"># The Landsat Level 1 images are delivered in a quantized format. </span>
+    <span class="c1"># This has to be converted to top-of-atmosphere reflectance using the provided metadata.  </span>
+    
+    <span class="c1"># One MTL file for a scene - bundled with a list of Band specific TIFF files</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">out_filename</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="c1"># M_p for Red</span>
+        <span class="n">band_number</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="n">M_p_red</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;L1_METADATA_FILE&#39;</span><span class="p">]</span> \
+                  <span class="p">[</span><span class="s1">&#39;RADIOMETRIC_RESCALING&#39;</span><span class="p">]</span> \
+                  <span class="p">[</span><span class="s1">&#39;REFLECTANCE_MULT_BAND_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">band_number</span><span class="p">)]</span>
+        <span class="n">band_number</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">M_p_nir</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;L1_METADATA_FILE&#39;</span><span class="p">]</span> \
+                  <span class="p">[</span><span class="s1">&#39;RADIOMETRIC_RESCALING&#39;</span><span class="p">]</span> \
+                  <span class="p">[</span><span class="s1">&#39;REFLECTANCE_MULT_BAND_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">band_number</span><span class="p">)]</span>
+        <span class="n">band_number</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="n">A_p_red</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;L1_METADATA_FILE&#39;</span><span class="p">]</span> \
+                  <span class="p">[</span><span class="s1">&#39;RADIOMETRIC_RESCALING&#39;</span><span class="p">]</span> \
+                  <span class="p">[</span><span class="s1">&#39;REFLECTANCE_ADD_BAND_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">band_number</span><span class="p">)]</span>
+        <span class="n">band_number</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">A_p_nir</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;L1_METADATA_FILE&#39;</span><span class="p">]</span> \
+                  <span class="p">[</span><span class="s1">&#39;RADIOMETRIC_RESCALING&#39;</span><span class="p">]</span> \
+                  <span class="p">[</span><span class="s1">&#39;REFLECTANCE_ADD_BAND_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">band_number</span><span class="p">)]</span>
+    
+    
+    <span class="c1"># +&#39;_B{}.TIF&#39;.format(4)</span>
+    <span class="n">redband</span> <span class="o">=</span> <span class="n">item</span> <span class="o">+</span><span class="s1">&#39;_B</span><span class="si">{}</span><span class="s1">.TIF&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">nirband</span> <span class="o">=</span> <span class="n">item</span> <span class="o">+</span><span class="s1">&#39;_B</span><span class="si">{}</span><span class="s1">.TIF&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+    
+    <span class="c1"># read red and nir</span>
+    <span class="n">red</span> <span class="o">=</span> <span class="n">xa</span><span class="o">.</span><span class="n">open_rasterio</span><span class="p">(</span><span class="n">redband</span><span class="p">,</span> <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;band&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="mi">1024</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="mi">1024</span><span class="p">})</span>
+    <span class="n">nir</span> <span class="o">=</span> <span class="n">xa</span><span class="o">.</span><span class="n">open_rasterio</span><span class="p">(</span><span class="n">nirband</span><span class="p">,</span> <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;band&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="mi">1024</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="mi">1024</span><span class="p">})</span>
+    
+    <span class="n">red_toa</span> <span class="o">=</span> <span class="n">M_p_red</span> <span class="o">*</span> <span class="n">red</span> <span class="o">+</span> <span class="n">A_p_red</span>
+    <span class="n">nir_toa</span> <span class="o">=</span> <span class="n">M_p_nir</span> <span class="o">*</span> <span class="n">nir</span> <span class="o">+</span> <span class="n">A_p_nir</span>
+    
+    <span class="n">ndvi</span> <span class="o">=</span> <span class="p">(</span><span class="n">nir_toa</span> <span class="o">-</span> <span class="n">red_toa</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">nir_toa</span> <span class="o">+</span> <span class="n">red_toa</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">ndvi</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We got 126 images</p>
+</div>
+</div>
+<div class="section" id="start-a-dask-client-to-monitor-execution-with-the-dashboard">
+<h1>Start a Dask client to monitor execution with the dashboard.<a class="headerlink" href="#start-a-dask-client-to-monitor-execution-with-the-dashboard" title="Permalink to this headline">¶</a></h1>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dask_gateway</span> <span class="kn">import</span> <span class="n">GatewayCluster</span>
+<span class="kn">from</span> <span class="nn">distributed</span> <span class="kn">import</span> <span class="n">Client</span>
+
+<span class="n">cluster</span> <span class="o">=</span> <span class="n">GatewayCluster</span><span class="p">()</span>
+<span class="n">cluster</span><span class="o">.</span><span class="n">adapt</span><span class="p">(</span><span class="n">minimum</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">maximum</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span> <span class="c1">#Keep a minimum of 2 workers, but allow for scaling up to 20 if there is RAM and CPU pressure</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span> <span class="c1">#Make sure dask knows to use this cluster for computations</span>
+<span class="n">cluster</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id": "bcade69659bb479b83dd5b81feaad30a", "version_major": 2, "version_minor": 0}
+</script></div>
+</div>
+<p>Each scene’s task execution is delayed and the operations are parallelized automatically.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lazy_datasets</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">baselinks</span><span class="p">:</span>
+    <span class="n">ds</span> <span class="o">=</span> <span class="n">get_ndvi</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+    <span class="n">lazy_datasets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
+
+<span class="n">datasets</span> <span class="o">=</span> <span class="n">dask</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="o">*</span><span class="n">lazy_datasets</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># TODO - Get the translation using MTL to do TOA</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Shut down computing resources </span>
+<span class="n">client</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="n">cluster</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">datasets</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">variable</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>dask.array&lt;truediv, shape=(1, 7761, 7621), dtype=float64, chunksize=(1, 1024, 1024), chunktype=numpy.ndarray&gt;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">len</span><span class="p">(</span><span class="n">datasets</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>128
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="lets-inspect-the-ndvi-of-a-sample-scene">
+<h1>Lets inspect the NDVI of  a sample scene<a class="headerlink" href="#lets-inspect-the-ndvi-of-a-sample-scene" title="Permalink to this headline">¶</a></h1>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">### One of the latest captures (20200827)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">im</span> <span class="o">=</span> <span class="n">datasets</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;BrBG&#39;</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=-</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/06_scalingup_pangeo_41_0.png" src="_images/06_scalingup_pangeo_41_0.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># one of the earliest captures (20130520)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">im</span> <span class="o">=</span> <span class="n">datasets</span><span class="p">[</span><span class="mi">126</span><span class="p">]</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;BrBG&#39;</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=-</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/06_scalingup_pangeo_43_0.png" src="_images/06_scalingup_pangeo_43_0.png" />
+</div>
+</div>
+</div>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+        
+        <div class='prev-next-bottom'>
+            
+
+        </div>
+        
+        </div>
+    </div>
+    <footer class="footer mt-5 mt-md-0">
+    <div class="container">
+      <p>
+        
+            &copy; Copyright 2021.<br/>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+  
+  <script src="_static/js/index.1c5a1a01449ed65a7b51.js"></script>
+
+  
+  </body>
+</html>

@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>mynewbook &#8212; Open Data Education Cookbook</title>
+    <title>Building Pathways for Open Science Education using NASA datasets &#8212; Cloud Native Open Data Workflows</title>
     
   <link href="_static/css/theme.css" rel="stylesheet" />
   <link href="_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
@@ -51,6 +51,7 @@
     <script async="async" src="_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Introduction to Cloud Computing" href="notebooks/01_intro_to_cloud.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
     
@@ -69,8 +70,10 @@
         <div class="navbar-brand-box">
     <a class="navbar-brand text-wrap" href="index.html">
       
+      <img src="_static/opendata.png" class="logo" alt="logo">
       
-      <h1 class="site-logo" id="site-title">Open Data Education Cookbook</h1>
+      
+      <h1 class="site-logo" id="site-title">Cloud Native Open Data Workflows</h1>
       
     </a>
 </div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
@@ -79,21 +82,46 @@
 </form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
     <div class="bd-toc-item active">
         <ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="intro.html">
-   Welcome to your Jupyter Book
+ <li class="toctree-l1 current">
+  <a class="reference internal" href="#">
+   Building Pathways for Open Science Education using NASA datasets
   </a>
  </li>
 </ul>
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
-  <a class="reference internal" href="markdown.html">
-   Markdown Files
+  <a class="reference internal" href="notebooks/01_intro_to_cloud.html">
+   Introduction to Cloud Computing
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="notebooks.html">
-   Content with notebooks
+  <a class="reference internal" href="notebooks/02_aws_opendatasets.html">
+   Introduction to AWS Open Datasets
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="notebooks/03_multidim_analysis.html">
+   Multi-dimensional Analysis with xarray
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="notebooks/04_parallel_computing.html">
+   Parallel Computing with Dask
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="notebooks/05_data_visualization.html">
+   Data Visualization
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="notebooks/06_scalingup_pangeo.html">
+   Goal of this notebook is to scale through a cluster to calculate NDVI across 128+ Landsat Scenes (using DASK)
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="notebooks/Supplemental.html">
+   Supplemental notebook
   </a>
  </li>
 </ul>
@@ -153,11 +181,11 @@
         aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
     <div class="dropdown-buttons sourcebuttons">
         <a class="repository-button"
-            href="https://github.com/amanda-tan/jb-test"><button type="button" class="btn btn-secondary topbarbtn"
+            href="https://github.com/executablebooks/jupyter-book"><button type="button" class="btn btn-secondary topbarbtn"
                 data-toggle="tooltip" data-placement="left" title="Source repository"><i
                     class="fab fa-github"></i>repository</button></a>
         <a class="issues-button"
-            href="https://github.com/amanda-tan/jb-test/issues/new?title=Issue%20on%20page%20%2FREADME.html&body=Your%20issue%20content%20here."><button
+            href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2FREADME.html&body=Your%20issue%20content%20here."><button
                 type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
                 title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
         
@@ -178,6 +206,39 @@
         <!-- Table of contents -->
         <div class="d-none d-md-block col-md-2 bd-toc show">
             
+            <div class="tocsection onthispage pt-5 pb-3">
+                <i class="fas fa-list"></i> Contents
+            </div>
+            <nav id="bd-toc-nav">
+                <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#introduction">
+   Introduction
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#description">
+   Description
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#tutorial-index">
+   Tutorial index
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#issues">
+   Issues
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#acknowledgements">
+   Acknowledgements
+  </a>
+ </li>
+</ul>
+
+            </nav>
         </div>
     </div>
 </div>
@@ -186,8 +247,76 @@
         
               <div>
                 
-  <div class="section" id="mynewbook">
-<h1>mynewbook<a class="headerlink" href="#mynewbook" title="Permalink to this headline">¶</a></h1>
+  <!-- #region -->
+<div class="section" id="building-pathways-for-open-science-education-using-nasa-datasets">
+<h1>Building Pathways for Open Science Education using NASA datasets<a class="headerlink" href="#building-pathways-for-open-science-education-using-nasa-datasets" title="Permalink to this headline">¶</a></h1>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This is a work in progress!</p>
+</div>
+<p>You can launch the notebooks featured in this Jupyterbook on <a class="reference external" href="https://mybinder.org/v2/gh/ESIPFed/open-data-education/master?urlpath=lab"><img alt="Binder" src="https://mybinder.org/badge.svg" /></a></p>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>Here we will create a hypothetical scientific use case: A user wants to use the cloud to analyze change in landcover over a certain region in the Amazon Forest over a period of 20 years.  The goal of this tutorial is to introduce users to working with NASA satellite imagery and utilizing Amazon Web Services’ Open Data program (updated to add searching for imagery through STAC). Through a series of standardized modules, the user will develop an end-to-end workflow for working with satellite imagery, learn about geoscientific Python tools, visualize the data and utilize a parallel computation platform on the cloud (i.e. the Pangeo Platform).</p>
+</div>
+<div class="section" id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p>The contents of this repository consists of a series of Jupyter Notebooks and can be viewed on an open source, free computational platform like Binder. To view the contents of this repo, click the launch binder icon above.</p>
+<!-- #endregion -->
+<!-- #region -->
+</div>
+<div class="section" id="tutorial-index">
+<h2>Tutorial index<a class="headerlink" href="#tutorial-index" title="Permalink to this headline">¶</a></h2>
+<table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>link</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Introduction to Cloud Computing</p></td>
+<td><p>Working with Big Data</p></td>
+<td><p><span class="xref myst">Tutorial 1</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Searching for Datasets</p></td>
+<td><p>Use STAC and Open Data Programs</p></td>
+<td><p><span class="xref myst">Tutorial 2</span></p></td>
+</tr>
+<tr class="row-even"><td><p>Multi-dimensional analysis</p></td>
+<td><p>Introduction to Xarray</p></td>
+<td><p><span class="xref myst">Tutorial 3</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Parallel Computing</p></td>
+<td><p>Introduction to Dask</p></td>
+<td><p><span class="xref myst">Tutorial 4</span></p></td>
+</tr>
+<tr class="row-even"><td><p>Visualization</p></td>
+<td><p>Introduction to HoloViews</p></td>
+<td><p><span class="xref myst">Tutorial 5</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Scaling-up</p></td>
+<td><p>Using Dask and Pangeo</p></td>
+<td><p><span class="xref myst">Tutorial 6</span></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="issues">
+<h2>Issues<a class="headerlink" href="#issues" title="Permalink to this headline">¶</a></h2>
+<p><strong>Feedback/new tutotrial</strong><br />
+You can request new content or give general feedback through Gitub issues as well by creating an issue or doing a pull request.</p>
+</div>
+<div class="section" id="acknowledgements">
+<h2>Acknowledgements<a class="headerlink" href="#acknowledgements" title="Permalink to this headline">¶</a></h2>
+<p>The contents of this repository was developed by Aji John and Amanda Tan at the University of Washington with funding from the ESIPLab Summer 2020 Incubator Award 2020 and NASA ROSES.</p>
+<!-- #endregion -->
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+</div>
+<div class="toctree-wrapper compound">
+</div>
 </div>
 
     <script type="text/x-thebe-config">
@@ -215,6 +344,7 @@
         
         <div class='prev-next-bottom'>
             
+    <a class='right-next' id="next-link" href="notebooks/01_intro_to_cloud.html" title="next page">Introduction to Cloud Computing</a>
 
         </div>
         
@@ -223,8 +353,6 @@
     <footer class="footer mt-5 mt-md-0">
     <div class="container">
       <p>
-        
-          By Aji John + Amanda Tan via the ESIPLab Incubator<br/>
         
             &copy; Copyright 2021.<br/>
       </p>

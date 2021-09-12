@@ -1,0 +1,13 @@
+# Table of contents
+# Learn more at https://jupyterbook.org/customize/toc.html
+
+format: jb-book
+root: intro
+chapters:
+- file: notebooks/01_intro_to_cloud
+- file: notebooks/02_aws_opendatasets
+- file: notebooks/03_multidim_analysis
+- file: notebooks/04_parallel_computing.ipynb
+- file: notebooks/05_data_visualization.ipynb
+- file: notebooks/06_scalingup_pangeo.ipynb
+- file: notebooks/Supplemental.ipynb
