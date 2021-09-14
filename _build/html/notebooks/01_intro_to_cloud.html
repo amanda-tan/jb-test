@@ -1,0 +1,609 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>What is cloud computing? &#8212; Cloud Native Open Data Workflows</title>
+    
+  <link href="../_static/css/theme.css" rel="stylesheet" />
+  <link href="../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+
+    
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx-book-theme.e8e5499552300ddf5d7adccae7cc3b70.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    
+  <link rel="preload" as="script" href="../_static/js/index.1c5a1a01449ed65a7b51.js">
+
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/togglebutton.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
+    <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
+    <script >
+        const thebe_selector = ".thebe"
+        const thebe_selector_input = "pre"
+        const thebe_selector_output = ".output"
+    </script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Introduction to AWS Open Datasets" href="02_aws_opendatasets.html" />
+    <link rel="prev" title="Building Pathways for Open Science Education using NASA datasets" href="../intro.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+      <img src="../_static/opendata.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Cloud Native Open Data Workflows</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+    <div class="bd-toc-item active">
+        <ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../intro.html">
+   Building Pathways for Open Science Education using NASA datasets
+  </a>
+ </li>
+</ul>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   What is cloud computing?
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="02_aws_opendatasets.html">
+   Introduction to AWS Open Datasets
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="03_multidim_analysis.html">
+   Multi-dimensional Analysis with xarray
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="04_parallel_computing.html">
+   Parallel Computing with Dask
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="05_data_visualization.html">
+   Data Visualization
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="06_scalingup_pangeo.html">
+   Goal of this notebook is to scale through a cluster to calculate NDVI across 128+ Landsat Scenes (using DASK)
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Supplemental.html">
+   Supplemental notebook
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="topbar container-xl fixed-top">
+    <div class="topbar-contents row">
+        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
+        <div class="col pl-md-4 topbar-main">
+            
+            <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+                data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+                aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+                title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+                <i class="fas fa-bars"></i>
+                <i class="fas fa-arrow-left"></i>
+                <i class="fas fa-arrow-up"></i>
+            </button>
+            
+            
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="../_sources/notebooks/01_intro_to_cloud.md"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.md</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+</div>
+
+            <!-- Source interaction buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://github.com/executablebooks/jupyter-book"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        <a class="issues-button"
+            href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Fnotebooks/01_intro_to_cloud.html&body=Your%20issue%20content%20here."><button
+                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
+                title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
+        
+    </div>
+</div>
+
+            <!-- Full screen (wrap in <a> to have style consistency -->
+
+<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+        title="Fullscreen mode"><i
+            class="fas fa-expand"></i></button></a>
+
+            <!-- Launch buttons -->
+
+        </div>
+
+        <!-- Table of contents -->
+        <div class="d-none d-md-block col-md-2 bd-toc show">
+            
+            <div class="tocsection onthispage pt-5 pb-3">
+                <i class="fas fa-list"></i> Contents
+            </div>
+            <nav id="bd-toc-nav">
+                <ul class="visible nav section-nav flex-column">
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#">
+   What is cloud computing?
+  </a>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#why-use-the-cloud">
+   Why use the cloud?
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#there-are-about-six-advantages-to-using-the-public-cloud-as-a-research-platform">
+     There are about six advantages to using the public cloud as a research platform.
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#there-are-about-four-reasons-to-not-migrate-to-the-cloud">
+     There are about four reasons to not migrate to the cloud
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#cloud-adoption-framework">
+   Cloud adoption framework
+  </a>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#advisories">
+   Advisories
+  </a>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-burden-of-cloud-management-is-on-each-of-us">
+   The burden of cloud management is on each of us
+  </a>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#lemons-from-lemonade">
+   Lemons from lemonade
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#our-public-cloud-framework">
+     Our Public Cloud Framework
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#a-cloud-under-your-desk">
+   A Cloud Under Your Desk
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#the-cloud-components-are-compute-store-manage-web-and-services">
+     The cloud components are compute, store, manage, web and services
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#the-cloud-facets-to-learn-about-are-admin-cost-security-scale-and-time">
+     The cloud facets to learn about are admin, cost, security, scale and time
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#should-i-move-to-the-cloud">
+     Should I move to the cloud?
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#commercial-cloud-options">
+     Commercial Cloud Options
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#the-aws-console">
+     The AWS console.
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#the-console-and-regions">
+     The console and regions
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
+  <div class="section" id="what-is-cloud-computing">
+<h1>What is cloud computing?<a class="headerlink" href="#what-is-cloud-computing" title="Permalink to this headline">¶</a></h1>
+<p>Cloud computing encompasses a large collection of publicly available
+services provided by many different companies where you can provision
+computing on machines that are <em>only</em> accessible to you through an
+intermediated interface (such as a web-browser or through ssh).</p>
+<p>These types of services range from things like Google Drive or Dropbox,
+that provide access to storage through a browser, to services that give
+you access to a linux-installed bare metal machine (“bare metal” means
+that you get the entire machine to yourself, you are the “single tenant”
+of this machine).</p>
+<p>This contrasts with buying your own desktop or laptop computer, or
+cluster of machines, or with buying external storage devices (such as a
+RAID, redundant array of independent disks). It also contrasts with some
+services that are not publicly accessible, such as institutional
+clusters, and the <a class="reference external" href="https://www.xsede.org/">XSEDE</a> services, that may also
+only be accessible to you through an intermediated interface.</p>
+</div>
+<div class="section" id="why-use-the-cloud">
+<h1>Why use the cloud?<a class="headerlink" href="#why-use-the-cloud" title="Permalink to this headline">¶</a></h1>
+<ol class="simple">
+<li><p>Cattle, not pets</p></li>
+</ol>
+<p><img alt="cattlenotpets" src="https://cdn2.hubspot.net/hubfs/5041972/Imported_Blog_Media/Pets-Cattle-1-4.png" /></p>
+<ol class="simple">
+<li><p>More data sets are moving to the cloud e.g. (Landsat, Sentinel-2) – compute where you store to minimize time downloading, storage problems</p></li>
+</ol>
+<p><img alt="red queen" src="fig/redqueen.png" /></p>
+<div class="section" id="there-are-about-six-advantages-to-using-the-public-cloud-as-a-research-platform">
+<h2>There are about six advantages to using the public cloud as a research platform.<a class="headerlink" href="#there-are-about-six-advantages-to-using-the-public-cloud-as-a-research-platform" title="Permalink to this headline">¶</a></h2>
+<ol>
+<li><p>You do not wait for compute tasks to go through a queue</p>
+<blockquote>
+<div><p>Compute can start as soon as you want it</p>
+</div></blockquote>
+</li>
+<li><p>You do not purchase and maintain hardware, operating systems etcetera</p>
+<blockquote>
+<div><p>Upgrades just happen</p>
+</div></blockquote>
+</li>
+<li><p>You pay for resources you use; and then shut them off</p>
+<blockquote>
+<div><p>You don’t have to buy into an institutional cluster if the cost calculation doesn’t make sense for you.</p>
+</div></blockquote>
+</li>
+<li><p>You have huge scale-up potential (reduced processing time)</p>
+<blockquote>
+<div><p>In principle, you have near-infinite computing capacity.</p>
+</div></blockquote>
+</li>
+<li><p>There is a huge support community rapidly expanding cloud tools and tech</p>
+<blockquote>
+<div><p>Because of the public availability of these resources, and substantial buy-in from industry, there is a large eco-system of tools and resources.</p>
+</div></blockquote>
+</li>
+<li><p>Storage, reliability, security and many other off-the-shelf services</p>
+<blockquote>
+<div><p>And they just keep making new stuff.</p>
+</div></blockquote>
+</li>
+</ol>
+</div>
+<div class="section" id="there-are-about-four-reasons-to-not-migrate-to-the-cloud">
+<h2>There are about four reasons to not migrate to the cloud<a class="headerlink" href="#there-are-about-four-reasons-to-not-migrate-to-the-cloud" title="Permalink to this headline">¶</a></h2>
+<ol class="simple">
+<li><p>You have already identified an adequate-to-your-needs computing environment like XSEDE
+Sometimes it just doesn’t make sense. In some cases, you already have the access to the resources you need.</p></li>
+<li><p>You don’t have time to learn how to work on the public cloud
+There is stuff to learn. That’s what we’re here for! But there will be more to learn after this session is over. If you prefer to learn other things, you might not want to invest your time in learning about the cloud.</p></li>
+<li><p>You operate your computer(s) at a very high duty cycle (more cost-effective)
+If your computer is constantly computing something, the cloud might end up costing you more.</p></li>
+<li><p>There is too much administrative drag preventing you from using the cloud
+That’s a thing. Especially when working with human subject data that is encumbered through regulation (such as HIPAA).</p></li>
+</ol>
+</div>
+</div>
+<div class="section" id="cloud-adoption-framework">
+<h1>Cloud adoption framework<a class="headerlink" href="#cloud-adoption-framework" title="Permalink to this headline">¶</a></h1>
+<p>If you are working examples you will want to set up and configure an AWS
+cloud account. Be aware that if you put a credit card number in you will
+want to know how to turn things off because the first rule of cloud
+computing is…</p>
+<p><strong>Cloud computing is like a utility: You pay for resources you allocate</strong></p>
+<p>While learning AWS use free / low-cost resources and practice deleting them
+when you are done with them. You do not want to exceed your trial credits
+of around $100.</p>
+</div>
+<div class="section" id="advisories">
+<h1>Advisories<a class="headerlink" href="#advisories" title="Permalink to this headline">¶</a></h1>
+<blockquote>
+<div></div></blockquote>
+<blockquote>
+<div></div></blockquote>
+</div>
+<div class="section" id="the-burden-of-cloud-management-is-on-each-of-us">
+<h1>The burden of cloud management is on each of us<a class="headerlink" href="#the-burden-of-cloud-management-is-on-each-of-us" title="Permalink to this headline">¶</a></h1>
+<p>There are details to learn about managing your work on the public cloud.
+Without this skill life can quickly become expensive; for example if you accidentally
+allocate &gt; expensive resources and leave them running.
+(Cloud instances can be turned off without losing state/progress and they can
+be saved as memory images.)
+{: .callout}</p>
+</div>
+<div class="section" id="lemons-from-lemonade">
+<h1>Lemons from lemonade<a class="headerlink" href="#lemons-from-lemonade" title="Permalink to this headline">¶</a></h1>
+<p>A good way of getting some bad news is to publish <strong>and then delete</strong> your cloud
+access credentials on GitHub. GitHub supports versioning: Someone who is not your
+friend can roll back your public repository to the version where the key was
+present, grab that key, and start using your cloud account at your expense.
+{: .callout}</p>
+<div class="section" id="our-public-cloud-framework">
+<h2>Our Public Cloud Framework<a class="headerlink" href="#our-public-cloud-framework" title="Permalink to this headline">¶</a></h2>
+<p>This <em>framework</em> is the vocabulary and relationships we use to describe
+using the public cloud platform for data-driven research. Here comes the
+jargon storm! In what follows we assume you are a <strong>Researcher</strong> focused
+on data-driven science and that you are interested in adopting the cloud
+as a way of streamlining that process in some capacity.</p>
+<p>As a Researcher you do perfunctory processing and exploratory processing.
+The cloud can help you with both, but at a cost: The time you invest to
+learn new methods. We call this <em>cloud adoption</em> and the core premise is
+that you no longer have a <em>familiar computer</em> with an attached storage
+system where you log in and do your work. The cloud model is (they like
+to say) <em>cattle not pets</em>: You have a huge pool of available compute
+resources and you rent them by the hour. When you are done with them you
+simply <em>Stop</em> or <em>Terminate</em> them and they go back into the resource
+pool.  Before continuing let’s do a quick cost analysis of what this
+means: How does a cloud machine compare to a desktop?</p>
+<blockquote>
+<div></div></blockquote>
+</div>
+</div>
+<div class="section" id="a-cloud-under-your-desk">
+<h1>A Cloud Under Your Desk<a class="headerlink" href="#a-cloud-under-your-desk" title="Permalink to this headline">¶</a></h1>
+<p>A good desktop might cost <span class="math notranslate nohighlight">\(3000; and a very powerful cloud instance
+will cost about \)</span>0.40 (USD) per hour. Let’s say for the sake of
+argument that they are equivalent in compute power and attached
+storage. If you work eight-hour days with four weeks of vacation then
+your annual compute cost is roughly <span class="math notranslate nohighlight">\(800. Over three years your &quot;cloud
+under the desk&quot; runs you \)</span>2400; but you can make this cheaper if you do
+not need the compute power; or you can throttle it up when you need a
+lot. You might also ask: What are the additional tradeoffs and other
+factors?</p>
+<div class="section" id="the-cloud-components-are-compute-store-manage-web-and-services">
+<h2>The cloud components are compute, store, manage, web and services<a class="headerlink" href="#the-cloud-components-are-compute-store-manage-web-and-services" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Compute (=EC2)</p></li>
+<li><p>Storage (= S3)</p>
+<ul>
+<li><p>0.024 dollars per GB-month (and x 1/2 and x 1/4 for archival applications)</p></li>
+</ul>
+</li>
+<li><p>Manage = Databases… SQL, Not Only SQL… Data Warehouses… query machinery</p></li>
+<li><p>Web = Web services, web sites, APIs, Clients, confederation, …</p></li>
+<li><p>Services = All of the above simplified: Often no Compute involved</p></li>
+</ul>
+</div>
+<div class="section" id="the-cloud-facets-to-learn-about-are-admin-cost-security-scale-and-time">
+<h2>The cloud facets to learn about are admin, cost, security, scale and time<a class="headerlink" href="#the-cloud-facets-to-learn-about-are-admin-cost-security-scale-and-time" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Admin is easy to dismiss; but it is always present, even on the cloud</p>
+<ul>
+<li><p>You can keep your cloud environment up-to-date without becoming a sysadmin</p></li>
+</ul>
+</li>
+<li><p>Cost is ‘one penny per processor-hour and three pennies per GB-month’</p>
+<ul>
+<li><p>…but there are more details…</p></li>
+<li><p>…and there are cost calculators… which can be misleading…</p></li>
+<li><p>…so we recommend these steps, for example for grant writing</p></li>
+</ul>
+</li>
+<li><p>The cloud is secure provided you manage your credentials</p>
+<ul>
+<li><p>keep them out of GitHub (which can be rolled back)</p></li>
+<li><p>Use MFA</p></li>
+<li><p>Follow other standard procedures</p></li>
+<li><p>If you are going over to PHI / HIPAA there is a whole ‘nother level to this</p></li>
+</ul>
+</li>
+<li><p>The cloud is cost-competitive with traditional <strong>buy and maintain</strong> (<strong>BAM</strong>)</p>
+<ul>
+<li><p>This in part depends on your percent usage: Machine time / wall clock time</p>
+<ul>
+<li><p>Studies indicate the breakeven is currently around 50%</p></li>
+</ul>
+</li>
+<li><p>The cloud <em>crushes</em> <strong>BAM</strong> on your wall clock time</p>
+<ul>
+<li><p>Start wait is zero</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="should-i-move-to-the-cloud">
+<h2>Should I move to the cloud?<a class="headerlink" href="#should-i-move-to-the-cloud" title="Permalink to this headline">¶</a></h2>
+<p>This really depends on the value of your time in relation to your
+research budget; and on how much of your wall clock time you spend doing
+computing.  It also depends on your team’s capacity to assess and learn
+cloud tech for your work. This might be very fast - which is what we find
+in the majority of cases - but if you are getting into sophisticated work
+e.g. using a web framework or developing a database then substantial
+bootstrapping effort will be required.</p>
+</div>
+<div class="section" id="commercial-cloud-options">
+<h2>Commercial Cloud Options<a class="headerlink" href="#commercial-cloud-options" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="http://console.cloud.google.com">Google Cloud Platform</a>: Easy Interface, cheap computing options (<span class="math notranslate nohighlight">\(300 credits, free signup)
+[Amazon Web Services](http://console.aws.com): LOTS of services, features, most widely used (\)</span>200 AWS Educate)
+<a class="reference external" href="http://portal.azure.com">Microsoft Azure</a>: Integrates well with other Microsoft products</p>
+</div>
+<div class="section" id="the-aws-console">
+<h2>The AWS console.<a class="headerlink" href="#the-aws-console" title="Permalink to this headline">¶</a></h2>
+<p>Let’s get concrete. There are several ways to interact with cloud
+computing resources. Today, we will see how to interact through a web
+console, through command line interfaces, and through programmatic APIs.</p>
+<p>We’ll start with a relatively manual way, that is also relatively
+straight-forward: using the AWS web console. To do so, we go to:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>http://aws.amazon.com/
+</pre></div>
+</div>
+<p>To log in click on the top right “My account” and then “AWS management console”</p>
+<p>The account ID we will use here is “uwescience”. Enter your credentials.
+You might have to change your password the first time that you log in.</p>
+</div>
+<div class="section" id="the-console-and-regions">
+<h2>The console and regions<a class="headerlink" href="#the-console-and-regions" title="Permalink to this headline">¶</a></h2>
+<p>Once you are in, you can select from among several different services
+through the console. There are a dizzying array of services to choose
+from, really.</p>
+<p>One thing that we will point out first before we even look at any of the
+services that we can access is that AWS operates several different data
+centers. You would think that this doesn’t matter, because it’s all in
+the cloud anyway, but that’s wrong. The location of the data centers
+matters, because communication between data centers is slow, expensive,
+and sometimes just impossible. For this reason, you always want to keep
+an eye on the “region” in which you are operating. For everything that we
+will do here, we will use the “us-east-2” region (Ohio).</p>
+<p>Let’s look at some services that we can use. Let’s start with S3.</p>
+</div>
+</div>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./notebooks"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+        
+        <div class='prev-next-bottom'>
+            
+    <a class='left-prev' id="prev-link" href="../intro.html" title="previous page">Building Pathways for Open Science Education using NASA datasets</a>
+    <a class='right-next' id="next-link" href="02_aws_opendatasets.html" title="next page">Introduction to AWS Open Datasets</a>
+
+        </div>
+        
+        </div>
+    </div>
+    <footer class="footer mt-5 mt-md-0">
+    <div class="container">
+      <p>
+        
+          By Amanda Tan Lehr and Aji John<br/>
+        
+            &copy; Copyright 2021.<br/>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+  
+  <script src="../_static/js/index.1c5a1a01449ed65a7b51.js"></script>
+
+  
+  </body>
+</html>
